@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+//import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 import reactLogo from "../assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -12,6 +12,17 @@ export const Route = createRootRoute({
 
 function RootRoute() {
   const [count, setCount] = useState(0);
+
+  const TanStackRouterDevtools = import.meta.env.DEV
+    ? () => null // Render nothing in production
+    : React.lazy(() =>
+        // Lazy load in development
+        import("@tanstack/router-devtools").then((res) => ({
+          default: res.TanStackRouterDevtools,
+          // For Embedded Mode
+          // default: res.TanStackRouterDevtoolsPanel
+        }))
+      );
 
   return (
     <>
@@ -48,7 +59,9 @@ function RootRoute() {
       </>
       <hr />
       <Outlet />
-      <TanStackRouterDevtools />
+      <Suspense>
+        <TanStackRouterDevtools position="bottom-right" initialIsOpen={false} />
+      </Suspense>
     </>
   );
 }
