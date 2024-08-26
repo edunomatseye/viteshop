@@ -13,13 +13,20 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PostsPostIdImport } from './routes/posts.$postId'
 
 // Create Virtual Routes
 
+const PostsLazyImport = createFileRoute('/posts')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const PostsLazyRoute = PostsLazyImport.update({
+  path: '/posts',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/posts.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -30,6 +37,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const PostsPostIdRoute = PostsPostIdImport.update({
+  path: '/$postId',
+  getParentRoute: () => PostsLazyRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -49,6 +61,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/posts': {
+      id: '/posts'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof PostsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/posts/$postId': {
+      id: '/posts/$postId'
+      path: '/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof PostsPostIdImport
+      parentRoute: typeof PostsLazyImport
+    }
   }
 }
 
@@ -57,6 +83,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   AboutLazyRoute,
+  PostsLazyRoute: PostsLazyRoute.addChildren({ PostsPostIdRoute }),
 })
 
 /* prettier-ignore-end */
@@ -68,7 +95,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/posts"
       ]
     },
     "/": {
@@ -76,6 +104,16 @@ export const routeTree = rootRoute.addChildren({
     },
     "/about": {
       "filePath": "about.lazy.tsx"
+    },
+    "/posts": {
+      "filePath": "posts.lazy.tsx",
+      "children": [
+        "/posts/$postId"
+      ]
+    },
+    "/posts/$postId": {
+      "filePath": "posts.$postId.tsx",
+      "parent": "/posts"
     }
   }
 }

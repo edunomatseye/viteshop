@@ -32,7 +32,17 @@ function RootRoute() {
         </Link>{" "}
         <Link to="/about" className="[&.active]:font-bold">
           About
-        </Link>
+        </Link>{" "}
+        <Link to="/posts" className="[&.active]:font-bold">
+          Posts
+        </Link>{" "}
+        <Link
+          to="/posts/$postId"
+          params={{ postId: "123" }}
+          className="[&.active]:font-bold"
+        >
+          Post ID
+        </Link>{" "}
       </div>
       <hr />
       <>
