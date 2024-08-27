@@ -43,6 +43,9 @@ function RootRoute() {
         >
           Post ID
         </Link>{" "}
+        <Link to="/contact" className="[&.active]:font-bold">
+          Contact
+        </Link>{" "}
       </div>
       <hr />
       <>
