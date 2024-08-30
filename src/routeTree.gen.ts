@@ -21,7 +21,8 @@ const PostsLazyImport = createFileRoute("/posts")();
 const ContactLazyImport = createFileRoute("/contact")();
 const AboutLazyImport = createFileRoute("/about")();
 const IndexLazyImport = createFileRoute("/")();
-const PostsPostIdLazyImport = createFileRoute("/posts/$postId")();
+const PostPostIdLazyImport = createFileRoute("/post/$postId")();
+const authLoginLazyImport = createFileRoute("/(auth)/login")();
 
 // Create/Update Routes
 
@@ -50,12 +51,17 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import("./routes/index.lazy").then((d) => d.Route));
 
-const PostsPostIdLazyRoute = PostsPostIdLazyImport.update({
-  path: "/$postId",
-  getParentRoute: () => PostsLazyRoute,
-} as any).lazy(() =>
-  import("./routes/posts.$postId.lazy").then((d) => d.Route),
-);
+const PostPostIdLazyRoute = PostPostIdLazyImport.update({
+  path: "/post/$postId",
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import("./routes/post.$postId.lazy").then((d) => d.Route));
+
+const authLoginLazyRoute = authLoginLazyImport
+  .update({
+    path: "/login",
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import("./routes/(auth)/login.lazy").then((d) => d.Route));
 
 // Populate the FileRoutesByPath interface
 
@@ -96,12 +102,19 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof TableLazyImport;
       parentRoute: typeof rootRoute;
     };
-    "/posts/$postId": {
-      id: "/posts/$postId";
-      path: "/$postId";
-      fullPath: "/posts/$postId";
-      preLoaderRoute: typeof PostsPostIdLazyImport;
-      parentRoute: typeof PostsLazyImport;
+    "/(auth)/login": {
+      id: "/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof authLoginLazyImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/post/$postId": {
+      id: "/post/$postId";
+      path: "/post/$postId";
+      fullPath: "/post/$postId";
+      preLoaderRoute: typeof PostPostIdLazyImport;
+      parentRoute: typeof rootRoute;
     };
   }
 }
@@ -112,8 +125,10 @@ export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   AboutLazyRoute,
   ContactLazyRoute,
-  PostsLazyRoute: PostsLazyRoute.addChildren({ PostsPostIdLazyRoute }),
+  PostsLazyRoute,
   TableLazyRoute,
+  authLoginLazyRoute,
+  PostPostIdLazyRoute,
 });
 
 /* prettier-ignore-end */
@@ -128,7 +143,9 @@ export const routeTree = rootRoute.addChildren({
         "/about",
         "/contact",
         "/posts",
-        "/table"
+        "/table",
+        "/login",
+        "/post/$postId"
       ]
     },
     "/": {
@@ -141,17 +158,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "contact.lazy.tsx"
     },
     "/posts": {
-      "filePath": "posts.lazy.tsx",
-      "children": [
-        "/posts/$postId"
-      ]
+      "filePath": "posts.lazy.tsx"
     },
     "/table": {
       "filePath": "table.lazy.tsx"
     },
-    "/posts/$postId": {
-      "filePath": "posts.$postId.lazy.tsx",
-      "parent": "/posts"
+    "/login": {
+      "filePath": "(auth)/login.lazy.tsx"
+    },
+    "/post/$postId": {
+      "filePath": "post.$postId.lazy.tsx"
     }
   }
 }

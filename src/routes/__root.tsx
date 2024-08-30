@@ -21,7 +21,7 @@ function RootRoute() {
           default: res.TanStackRouterDevtools,
           // For Embedded Mode
           // default: res.TanStackRouterDevtoolsPanel
-        }))
+        })),
       );
 
   return (
@@ -37,7 +37,7 @@ function RootRoute() {
           Posts
         </Link>{" "}
         <Link
-          to="/posts/$postId"
+          to="/post/$postId"
           params={{ postId: "123" }}
           className="[&.active]:font-bold"
         >
@@ -45,6 +45,9 @@ function RootRoute() {
         </Link>{" "}
         <Link to="/contact" className="[&.active]:font-bold">
           Contact
+        </Link>{" "}
+        <Link to="/table" className="[&.active]:font-bold">
+          Table
         </Link>{" "}
       </div>
       <hr />
