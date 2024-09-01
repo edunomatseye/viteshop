@@ -13,6 +13,7 @@ import { createFileRoute } from "@tanstack/react-router";
 // Import Routes
 
 import { Route as rootRoute } from "./routes/__root";
+import { Route as LayoutImport } from "./routes/_layout";
 
 // Create Virtual Routes
 
@@ -20,7 +21,7 @@ const TableLazyImport = createFileRoute("/table")();
 const PostsLazyImport = createFileRoute("/posts")();
 const ContactLazyImport = createFileRoute("/contact")();
 const AboutLazyImport = createFileRoute("/about")();
-const IndexLazyImport = createFileRoute("/")();
+const LayoutIndexLazyImport = createFileRoute("/_layout/")();
 const PostPostIdLazyImport = createFileRoute("/post/$postId")();
 const authLoginLazyImport = createFileRoute("/(auth)/login")();
 
@@ -46,10 +47,17 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import("./routes/about.lazy").then((d) => d.Route));
 
-const IndexLazyRoute = IndexLazyImport.update({
-  path: "/",
+const LayoutRoute = LayoutImport.update({
+  id: "/_layout",
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/index.lazy").then((d) => d.Route));
+} as any);
+
+const LayoutIndexLazyRoute = LayoutIndexLazyImport.update({
+  path: "/",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout.index.lazy").then((d) => d.Route),
+);
 
 const PostPostIdLazyRoute = PostPostIdLazyImport.update({
   path: "/post/$postId",
@@ -67,11 +75,11 @@ const authLoginLazyRoute = authLoginLazyImport
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexLazyImport;
+    "/_layout": {
+      id: "/_layout";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof LayoutImport;
       parentRoute: typeof rootRoute;
     };
     "/about": {
@@ -116,13 +124,20 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PostPostIdLazyImport;
       parentRoute: typeof rootRoute;
     };
+    "/_layout/": {
+      id: "/_layout/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof LayoutIndexLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
+  LayoutRoute: LayoutRoute.addChildren({ LayoutIndexLazyRoute }),
   AboutLazyRoute,
   ContactLazyRoute,
   PostsLazyRoute,
@@ -139,7 +154,7 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
+        "/_layout",
         "/about",
         "/contact",
         "/posts",
@@ -148,8 +163,11 @@ export const routeTree = rootRoute.addChildren({
         "/post/$postId"
       ]
     },
-    "/": {
-      "filePath": "index.lazy.tsx"
+    "/_layout": {
+      "filePath": "_layout.tsx",
+      "children": [
+        "/_layout/"
+      ]
     },
     "/about": {
       "filePath": "about.lazy.tsx"
@@ -168,6 +186,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/post/$postId": {
       "filePath": "post.$postId.lazy.tsx"
+    },
+    "/_layout/": {
+      "filePath": "_layout.index.lazy.tsx",
+      "parent": "/_layout"
     }
   }
 }
