@@ -1,24 +1,29 @@
 import React, { Suspense } from "react";
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  Link,
+  Outlet,
+} from "@tanstack/react-router";
 //import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 import "../App.css";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext()({
   component: RootRoute,
 });
 
 function RootRoute() {
-  const TanStackRouterDevtools = import.meta.env.DEV
-    ? () => null // Render nothing in production
-    : React.lazy(() =>
-        // Lazy load in development
-        import("@tanstack/router-devtools").then((res) => ({
-          default: res.TanStackRouterDevtools,
-          // For Embedded Mode
-          // default: res.TanStackRouterDevtoolsPanel
-        })),
-      );
+  const TanStackRouterDevtools =
+    import.meta.env.MODE !== "development"
+      ? () => null // Render nothing in production
+      : React.lazy(() =>
+          // Lazy load in development
+          import("@tanstack/router-devtools").then((res) => ({
+            default: res.TanStackRouterDevtools,
+            // For Embedded Mode
+            // default: res.TanStackRouterDevtoolsPanel
+          })),
+        );
 
   return (
     <>
