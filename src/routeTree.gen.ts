@@ -14,55 +14,56 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Route as rootRoute } from "./routes/__root";
 import { Route as LayoutImport } from "./routes/_layout";
+import { Route as LayoutIndexImport } from "./routes/_layout/index";
 
 // Create Virtual Routes
 
-const TableLazyImport = createFileRoute("/table")();
-const PostsLazyImport = createFileRoute("/posts")();
-const ContactLazyImport = createFileRoute("/contact")();
-const AboutLazyImport = createFileRoute("/about")();
-const LayoutIndexLazyImport = createFileRoute("/_layout/")();
-const PostPostIdLazyImport = createFileRoute("/post/$postId")();
+const LayoutTableLazyImport = createFileRoute("/_layout/table")();
+const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
+const LayoutContactLazyImport = createFileRoute("/_layout/contact")();
+const LayoutAboutLazyImport = createFileRoute("/_layout/about")();
 const authLoginLazyImport = createFileRoute("/(auth)/login")();
+const LayoutPostPostIdLazyImport = createFileRoute("/_layout/post/$postId")();
 
 // Create/Update Routes
-
-const TableLazyRoute = TableLazyImport.update({
-  path: "/table",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/table.lazy").then((d) => d.Route));
-
-const PostsLazyRoute = PostsLazyImport.update({
-  path: "/posts",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/posts.lazy").then((d) => d.Route));
-
-const ContactLazyRoute = ContactLazyImport.update({
-  path: "/contact",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/contact.lazy").then((d) => d.Route));
-
-const AboutLazyRoute = AboutLazyImport.update({
-  path: "/about",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/about.lazy").then((d) => d.Route));
 
 const LayoutRoute = LayoutImport.update({
   id: "/_layout",
   getParentRoute: () => rootRoute,
 } as any);
 
-const LayoutIndexLazyRoute = LayoutIndexLazyImport.update({
+const LayoutIndexRoute = LayoutIndexImport.update({
   path: "/",
   getParentRoute: () => LayoutRoute,
+} as any);
+
+const LayoutTableLazyRoute = LayoutTableLazyImport.update({
+  path: "/table",
+  getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
-  import("./routes/_layout.index.lazy").then((d) => d.Route),
+  import("./routes/_layout/table.lazy").then((d) => d.Route),
 );
 
-const PostPostIdLazyRoute = PostPostIdLazyImport.update({
-  path: "/post/$postId",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/post.$postId.lazy").then((d) => d.Route));
+const LayoutPostsLazyRoute = LayoutPostsLazyImport.update({
+  path: "/posts",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/posts.lazy").then((d) => d.Route),
+);
+
+const LayoutContactLazyRoute = LayoutContactLazyImport.update({
+  path: "/contact",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/contact.lazy").then((d) => d.Route),
+);
+
+const LayoutAboutLazyRoute = LayoutAboutLazyImport.update({
+  path: "/about",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/about.lazy").then((d) => d.Route),
+);
 
 const authLoginLazyRoute = authLoginLazyImport
   .update({
@@ -70,6 +71,13 @@ const authLoginLazyRoute = authLoginLazyImport
     getParentRoute: () => rootRoute,
   } as any)
   .lazy(() => import("./routes/(auth)/login.lazy").then((d) => d.Route));
+
+const LayoutPostPostIdLazyRoute = LayoutPostPostIdLazyImport.update({
+  path: "/post/$postId",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/post.$postId.lazy").then((d) => d.Route),
+);
 
 // Populate the FileRoutesByPath interface
 
@@ -82,34 +90,6 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutImport;
       parentRoute: typeof rootRoute;
     };
-    "/about": {
-      id: "/about";
-      path: "/about";
-      fullPath: "/about";
-      preLoaderRoute: typeof AboutLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/contact": {
-      id: "/contact";
-      path: "/contact";
-      fullPath: "/contact";
-      preLoaderRoute: typeof ContactLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/posts": {
-      id: "/posts";
-      path: "/posts";
-      fullPath: "/posts";
-      preLoaderRoute: typeof PostsLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/table": {
-      id: "/table";
-      path: "/table";
-      fullPath: "/table";
-      preLoaderRoute: typeof TableLazyImport;
-      parentRoute: typeof rootRoute;
-    };
     "/(auth)/login": {
       id: "/login";
       path: "/login";
@@ -117,18 +97,46 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof authLoginLazyImport;
       parentRoute: typeof rootRoute;
     };
-    "/post/$postId": {
-      id: "/post/$postId";
-      path: "/post/$postId";
-      fullPath: "/post/$postId";
-      preLoaderRoute: typeof PostPostIdLazyImport;
-      parentRoute: typeof rootRoute;
+    "/_layout/about": {
+      id: "/_layout/about";
+      path: "/about";
+      fullPath: "/about";
+      preLoaderRoute: typeof LayoutAboutLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
+    "/_layout/contact": {
+      id: "/_layout/contact";
+      path: "/contact";
+      fullPath: "/contact";
+      preLoaderRoute: typeof LayoutContactLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
+    "/_layout/posts": {
+      id: "/_layout/posts";
+      path: "/posts";
+      fullPath: "/posts";
+      preLoaderRoute: typeof LayoutPostsLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
+    "/_layout/table": {
+      id: "/_layout/table";
+      path: "/table";
+      fullPath: "/table";
+      preLoaderRoute: typeof LayoutTableLazyImport;
+      parentRoute: typeof LayoutImport;
     };
     "/_layout/": {
       id: "/_layout/";
       path: "/";
       fullPath: "/";
-      preLoaderRoute: typeof LayoutIndexLazyImport;
+      preLoaderRoute: typeof LayoutIndexImport;
+      parentRoute: typeof LayoutImport;
+    };
+    "/_layout/post/$postId": {
+      id: "/_layout/post/$postId";
+      path: "/post/$postId";
+      fullPath: "/post/$postId";
+      preLoaderRoute: typeof LayoutPostPostIdLazyImport;
       parentRoute: typeof LayoutImport;
     };
   }
@@ -137,13 +145,15 @@ declare module "@tanstack/react-router" {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  LayoutRoute: LayoutRoute.addChildren({ LayoutIndexLazyRoute }),
-  AboutLazyRoute,
-  ContactLazyRoute,
-  PostsLazyRoute,
-  TableLazyRoute,
+  LayoutRoute: LayoutRoute.addChildren({
+    LayoutAboutLazyRoute,
+    LayoutContactLazyRoute,
+    LayoutPostsLazyRoute,
+    LayoutTableLazyRoute,
+    LayoutIndexRoute,
+    LayoutPostPostIdLazyRoute,
+  }),
   authLoginLazyRoute,
-  PostPostIdLazyRoute,
 });
 
 /* prettier-ignore-end */
@@ -155,40 +165,45 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_layout",
-        "/about",
-        "/contact",
-        "/posts",
-        "/table",
-        "/login",
-        "/post/$postId"
+        "/login"
       ]
     },
     "/_layout": {
       "filePath": "_layout.tsx",
       "children": [
-        "/_layout/"
+        "/_layout/about",
+        "/_layout/contact",
+        "/_layout/posts",
+        "/_layout/table",
+        "/_layout/",
+        "/_layout/post/$postId"
       ]
-    },
-    "/about": {
-      "filePath": "about.lazy.tsx"
-    },
-    "/contact": {
-      "filePath": "contact.lazy.tsx"
-    },
-    "/posts": {
-      "filePath": "posts.lazy.tsx"
-    },
-    "/table": {
-      "filePath": "table.lazy.tsx"
     },
     "/login": {
       "filePath": "(auth)/login.lazy.tsx"
     },
-    "/post/$postId": {
-      "filePath": "post.$postId.lazy.tsx"
+    "/_layout/about": {
+      "filePath": "_layout/about.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/contact": {
+      "filePath": "_layout/contact.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/posts": {
+      "filePath": "_layout/posts.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/table": {
+      "filePath": "_layout/table.lazy.tsx",
+      "parent": "/_layout"
     },
     "/_layout/": {
-      "filePath": "_layout.index.lazy.tsx",
+      "filePath": "_layout/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/post/$postId": {
+      "filePath": "_layout/post.$postId.lazy.tsx",
       "parent": "/_layout"
     }
   }

@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-export const Route = createLazyFileRoute("/table")({
+export const Route = createLazyFileRoute("/_layout/table")({
   component: () => <TableRoute />,
 });
 

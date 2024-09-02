@@ -1,3 +1,4 @@
+import { AppSidebar } from "@/components/app-sidebar";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -18,6 +19,7 @@ function Layout() {
       </header>
       <main>
         <>
+          <AppSidebar />
           <div className="card">
             <button onClick={() => setCount((count) => count + 1)}>
               count is {count}

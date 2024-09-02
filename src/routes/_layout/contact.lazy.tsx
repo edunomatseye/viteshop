@@ -1,7 +1,7 @@
 import { type FieldApi, useForm } from "@tanstack/react-form";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/contact")({
+export const Route = createLazyFileRoute("/_layout/contact")({
   component: Contact,
 });
 

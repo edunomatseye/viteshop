@@ -1,14 +1,14 @@
 import { LoginForm } from "@/components/login-form";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/_layout/")({
+export const Route = createFileRoute("/_layout/")({
   component: Index,
 });
 
 function Index() {
   return (
     <div className="p-2">
-      <h3>Welcome Home Budy!!!</h3>
+      <h3>Welcome Home folder Budy!!!</h3>
       <LoginForm />
     </div>
   );
