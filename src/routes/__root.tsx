@@ -49,6 +49,9 @@ function RootRoute() {
         <Link to="/table" className="[&.active]:font-bold">
           Table
         </Link>{" "}
+        <Link to="/form" className="[&.active]:font-bold">
+          Form
+        </Link>{" "}
       </div>
       <hr />
 
