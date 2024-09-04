@@ -20,6 +20,7 @@ import { Route as LayoutIndexImport } from "./routes/_layout/index";
 
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
+const LayoutFormLazyImport = createFileRoute("/_layout/form")();
 const LayoutContactLazyImport = createFileRoute("/_layout/contact")();
 const LayoutAboutLazyImport = createFileRoute("/_layout/about")();
 const authLoginLazyImport = createFileRoute("/(auth)/login")();
@@ -50,6 +51,11 @@ const LayoutPostsLazyRoute = LayoutPostsLazyImport.update({
 } as any).lazy(() =>
   import("./routes/_layout/posts.lazy").then((d) => d.Route),
 );
+
+const LayoutFormLazyRoute = LayoutFormLazyImport.update({
+  path: "/form",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() => import("./routes/_layout/form.lazy").then((d) => d.Route));
 
 const LayoutContactLazyRoute = LayoutContactLazyImport.update({
   path: "/contact",
@@ -111,6 +117,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutContactLazyImport;
       parentRoute: typeof LayoutImport;
     };
+    "/_layout/form": {
+      id: "/_layout/form";
+      path: "/form";
+      fullPath: "/form";
+      preLoaderRoute: typeof LayoutFormLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
     "/_layout/posts": {
       id: "/_layout/posts";
       path: "/posts";
@@ -148,6 +161,7 @@ export const routeTree = rootRoute.addChildren({
   LayoutRoute: LayoutRoute.addChildren({
     LayoutAboutLazyRoute,
     LayoutContactLazyRoute,
+    LayoutFormLazyRoute,
     LayoutPostsLazyRoute,
     LayoutTableLazyRoute,
     LayoutIndexRoute,
@@ -173,6 +187,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_layout/about",
         "/_layout/contact",
+        "/_layout/form",
         "/_layout/posts",
         "/_layout/table",
         "/_layout/",
@@ -188,6 +203,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/contact": {
       "filePath": "_layout/contact.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/form": {
+      "filePath": "_layout/form.lazy.tsx",
       "parent": "/_layout"
     },
     "/_layout/posts": {
