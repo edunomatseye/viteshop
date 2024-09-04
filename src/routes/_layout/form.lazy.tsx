@@ -23,6 +23,7 @@ const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
+  password: z.string().min(2).max(20),
 });
 
 export function ProfileForm() {
@@ -60,6 +61,24 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="*****" {...field} />
+              </FormControl>
+              <FormDescription>
+                Please ensure to put in your password.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>
