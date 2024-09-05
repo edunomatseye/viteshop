@@ -18,6 +18,8 @@ import { Route as LayoutIndexImport } from "./routes/_layout/index";
 
 // Create Virtual Routes
 
+const ProductsIndexLazyImport = createFileRoute("/products/")();
+const ProductsPostIdLazyImport = createFileRoute("/products/$postId")();
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
 const LayoutFormLazyImport = createFileRoute("/_layout/form")();
@@ -33,10 +35,24 @@ const LayoutRoute = LayoutImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
+const ProductsIndexLazyRoute = ProductsIndexLazyImport.update({
+  path: "/products/",
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import("./routes/products/index.lazy").then((d) => d.Route),
+);
+
 const LayoutIndexRoute = LayoutIndexImport.update({
   path: "/",
   getParentRoute: () => LayoutRoute,
 } as any);
+
+const ProductsPostIdLazyRoute = ProductsPostIdLazyImport.update({
+  path: "/products/$postId",
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import("./routes/products/$postId.lazy").then((d) => d.Route),
+);
 
 const LayoutTableLazyRoute = LayoutTableLazyImport.update({
   path: "/table",
@@ -138,12 +154,26 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutTableLazyImport;
       parentRoute: typeof LayoutImport;
     };
+    "/products/$postId": {
+      id: "/products/$postId";
+      path: "/products/$postId";
+      fullPath: "/products/$postId";
+      preLoaderRoute: typeof ProductsPostIdLazyImport;
+      parentRoute: typeof rootRoute;
+    };
     "/_layout/": {
       id: "/_layout/";
       path: "/";
       fullPath: "/";
       preLoaderRoute: typeof LayoutIndexImport;
       parentRoute: typeof LayoutImport;
+    };
+    "/products/": {
+      id: "/products/";
+      path: "/products";
+      fullPath: "/products";
+      preLoaderRoute: typeof ProductsIndexLazyImport;
+      parentRoute: typeof rootRoute;
     };
     "/_layout/post/$postId": {
       id: "/_layout/post/$postId";
@@ -168,6 +198,8 @@ export const routeTree = rootRoute.addChildren({
     LayoutPostPostIdLazyRoute,
   }),
   authLoginLazyRoute,
+  ProductsPostIdLazyRoute,
+  ProductsIndexLazyRoute,
 });
 
 /* prettier-ignore-end */
@@ -179,7 +211,9 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_layout",
-        "/login"
+        "/login",
+        "/products/$postId",
+        "/products/"
       ]
     },
     "/_layout": {
@@ -217,9 +251,15 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_layout/table.lazy.tsx",
       "parent": "/_layout"
     },
+    "/products/$postId": {
+      "filePath": "products/$postId.lazy.tsx"
+    },
     "/_layout/": {
       "filePath": "_layout/index.tsx",
       "parent": "/_layout"
+    },
+    "/products/": {
+      "filePath": "products/index.lazy.tsx"
     },
     "/_layout/post/$postId": {
       "filePath": "_layout/post.$postId.lazy.tsx",
