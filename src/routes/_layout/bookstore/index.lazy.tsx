@@ -1,14 +1,14 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
-interface Book {
+type Book = {
   author: string;
   title: string;
   country: string;
   language: string;
-  pages: string;
-  year: string;
-}
+  pages?: number;
+  year?: number;
+} & Record<string, string | number | undefined>;
 
 export const Route = createLazyFileRoute("/_layout/bookstore/")({
   component: BookStore,
@@ -40,19 +40,19 @@ function BookStore() {
   );
 }
 
-function BookSearch({ books }) {
+function BookSearch({ books }: { books: Book[] }) {
   const [filter, setFilter] = useState<Book>({
     author: "",
     title: "",
     country: "",
     language: "",
-    pages: "",
-    year: "",
+    pages: undefined,
+    year: undefined,
   });
 
-  const filteredBook = useMemo(() => {
+  const filteredBooks = useMemo(() => {
     return books.filter((book: Book) => {
-      return Object.keys(filter).every((key) => {
+      return Object.keys(filter).some((key: string) => {
         const bookValue = String(book[key]).toLowerCase();
         const filterValue = String(filter[key]).toLowerCase().trim();
         return bookValue.includes(filterValue);
@@ -72,23 +72,40 @@ function BookSearch({ books }) {
     <>
       <>Hello bookstore</>
       <br />
-      {Object.keys(filter).map((name) => {
+      {Object.entries(filter).map(([name, value], index) => {
         return (
-          <>
+          <div key={index}>
             <input
               type="text"
               name={name}
-              value={filter[name]}
+              value={value}
               onChange={handleFilterState}
               placeholder={name}
               data-testId={name}
             />
-          </>
+          </div>
         );
       })}
       <br />
+      <br />
+      <br />
       <hr />
-      {JSON.stringify(filteredBook, null, 4)}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredBooks.map((book, index) => (
+          <div
+            key={index}
+            data-testid="book"
+            className="border p-4 rounded shadow"
+          >
+            <h3 className="font-bold">{book.title}</h3>
+            <p>Author: {book.author}</p>
+            <p>Country: {book.country}</p>
+            <p>Language: {book.language}</p>
+            <p>Pages: {book.pages}</p>
+            <p>Year: {book.year}</p>
+          </div>
+        ))}
+      </div>
       <style jsx>{`
         .book-search {
           font-family: Arial, sans-serif;
