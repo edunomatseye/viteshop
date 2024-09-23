@@ -1,14 +1,6 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
-
-type Book = {
-  author: string;
-  title: string;
-  country: string;
-  language: string;
-  pages?: number;
-  year?: number;
-} & Record<string, string | number | undefined>;
+import { Input } from "@/components/ui/input";
 
 export const Route = createLazyFileRoute("/_layout/bookstore/")({
   component: BookStore,
@@ -39,57 +31,63 @@ function BookStore() {
     />
   );
 }
+interface Book {
+  author: string;
+  country: string;
+  language: string;
+  pages: number;
+  title: string;
+  year: number;
+}
 
-function BookSearch({ books }: { books: Book[] }) {
-  const [filter, setFilter] = useState<Book>({
+interface BookSearchProps {
+  books: Book[];
+}
+
+type FilterKeys = keyof Book;
+
+const BookSearch: React.FC<BookSearchProps> = ({ books }) => {
+  const [filters, setFilters] = useState<Record<FilterKeys, string>>({
     author: "",
     title: "",
     country: "",
     language: "",
-    pages: undefined,
-    year: undefined,
+    year: "",
   });
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>(books);
 
-  const filteredBooks = useMemo(() => {
-    return books.filter((book: Book) => {
-      return Object.keys(filter).some((key: string) => {
-        const bookValue = String(book[key]).toLowerCase();
-        const filterValue = String(filter[key]).toLowerCase().trim();
-        return bookValue.includes(filterValue);
-      });
-    });
-  }, [books, filter]);
+  useEffect(() => {
+    const filtered = books.filter((book) =>
+      (Object.keys(filters) as FilterKeys[]).every((key) =>
+        book[key]
+          .toString()
+          .toLowerCase()
+          .includes(filters[key].toLowerCase().trim()),
+      ),
+    );
+    setFilteredBooks(filtered);
+  }, [filters, books]);
 
-  const handleFilterState = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFilter((prev) => ({
-      ...prev,
-      [name]: [value],
-    }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <>
-      <>Hello bookstore</>
-      <br />
-      {Object.entries(filter).map(([name, value], index) => {
-        return (
-          <div key={index}>
-            <input
-              type="text"
-              name={name}
-              value={value}
-              onChange={handleFilterState}
-              placeholder={name}
-              data-testId={name}
-            />
-          </div>
-        );
-      })}
-      <br />
-      <br />
-      <br />
-      <hr />
+    <div className="p-4">
+      <div className="mb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {(Object.keys(filters) as FilterKeys[]).map((key) => (
+          <Input
+            key={key}
+            data-testid={key}
+            name={key}
+            placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+            value={filters[key]}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        ))}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredBooks.map((book, index) => (
           <div
@@ -106,37 +104,8 @@ function BookSearch({ books }: { books: Book[] }) {
           </div>
         ))}
       </div>
-      <style jsx>{`
-        .book-search {
-          font-family: Arial, sans-serif;
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-        .search-inputs {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-        .search-input {
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-        .book-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 20px;
-        }
-        .book-item {
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          padding: 15px;
-          background-color: #f9f9f9;
-        }
-      `}</style>
-    </>
+    </div>
   );
-}
+};
+
+export default BookSearch;
