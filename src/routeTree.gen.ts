@@ -19,6 +19,7 @@ import { Route as LayoutIndexImport } from "./routes/_layout/index";
 // Create Virtual Routes
 
 const ProductsIndexLazyImport = createFileRoute("/products/")();
+const BookstoreIndexLazyImport = createFileRoute("/bookstore/")();
 const ProductsPostIdLazyImport = createFileRoute("/products/$postId")();
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
@@ -40,6 +41,13 @@ const ProductsIndexLazyRoute = ProductsIndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
   import("./routes/products/index.lazy").then((d) => d.Route),
+);
+
+const BookstoreIndexLazyRoute = BookstoreIndexLazyImport.update({
+  path: "/bookstore/",
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import("./routes/bookstore/index.lazy").then((d) => d.Route),
 );
 
 const LayoutIndexRoute = LayoutIndexImport.update({
@@ -168,6 +176,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutIndexImport;
       parentRoute: typeof LayoutImport;
     };
+    "/bookstore/": {
+      id: "/bookstore/";
+      path: "/bookstore";
+      fullPath: "/bookstore";
+      preLoaderRoute: typeof BookstoreIndexLazyImport;
+      parentRoute: typeof rootRoute;
+    };
     "/products/": {
       id: "/products/";
       path: "/products";
@@ -199,6 +214,7 @@ export const routeTree = rootRoute.addChildren({
   }),
   authLoginLazyRoute,
   ProductsPostIdLazyRoute,
+  BookstoreIndexLazyRoute,
   ProductsIndexLazyRoute,
 });
 
@@ -213,6 +229,7 @@ export const routeTree = rootRoute.addChildren({
         "/_layout",
         "/login",
         "/products/$postId",
+        "/bookstore/",
         "/products/"
       ]
     },
@@ -257,6 +274,9 @@ export const routeTree = rootRoute.addChildren({
     "/_layout/": {
       "filePath": "_layout/index.tsx",
       "parent": "/_layout"
+    },
+    "/bookstore/": {
+      "filePath": "bookstore/index.lazy.tsx"
     },
     "/products/": {
       "filePath": "products/index.lazy.tsx"
