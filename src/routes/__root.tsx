@@ -52,6 +52,9 @@ function RootRoute() {
         <Link to="/form" className="[&.active]:font-bold">
           Form
         </Link>{" "}
+        <Link to="/bookstore" className="[&.active]:font-bold">
+          Bookstore
+        </Link>{" "}
       </div>
       <hr />
 
