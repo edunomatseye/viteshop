@@ -6,5 +6,5 @@ export const Route = createLazyFileRoute("/products/$postId")({
 
 function PostRouteComponent() {
   const { postId } = Route.useParams();
-  return <div>Hello /products/$postId! {postId}</div>;
+  return <div>Hello school of economics /products/$postId! {postId}</div>;
 }
