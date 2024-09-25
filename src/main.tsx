@@ -8,7 +8,20 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
-const router = createRouter({ routeTree, basepath: "/viteshop" });
+const router = createRouter({
+  routeTree,
+  basepath: "/viteshop",
+  context: {
+    fetchPosts: () =>
+      Promise.resolve([
+        {
+          id: "1",
+          title: "Hello school of economics",
+          content: "Hello school of economics",
+        },
+      ]),
+  },
+});
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {

@@ -15,11 +15,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Route as rootRoute } from "./routes/__root";
 import { Route as LayoutImport } from "./routes/_layout";
 import { Route as LayoutIndexImport } from "./routes/_layout/index";
+import { Route as ProductsPostIdImport } from "./routes/products/$postId";
 
 // Create Virtual Routes
 
 const ProductsIndexLazyImport = createFileRoute("/products/")();
-const ProductsPostIdLazyImport = createFileRoute("/products/$postId")();
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
 const LayoutFormLazyImport = createFileRoute("/_layout/form")();
@@ -47,13 +47,6 @@ const LayoutIndexRoute = LayoutIndexImport.update({
   path: "/",
   getParentRoute: () => LayoutRoute,
 } as any);
-
-const ProductsPostIdLazyRoute = ProductsPostIdLazyImport.update({
-  path: "/products/$postId",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import("./routes/products/$postId.lazy").then((d) => d.Route),
-);
 
 const LayoutTableLazyRoute = LayoutTableLazyImport.update({
   path: "/table",
@@ -95,6 +88,11 @@ const authLoginLazyRoute = authLoginLazyImport
   } as any)
   .lazy(() => import("./routes/(auth)/login.lazy").then((d) => d.Route));
 
+const ProductsPostIdRoute = ProductsPostIdImport.update({
+  path: "/products/$postId",
+  getParentRoute: () => rootRoute,
+} as any);
+
 const LayoutBookstoreIndexLazyRoute = LayoutBookstoreIndexLazyImport.update({
   path: "/bookstore/",
   getParentRoute: () => LayoutRoute,
@@ -118,6 +116,13 @@ declare module "@tanstack/react-router" {
       path: "";
       fullPath: "";
       preLoaderRoute: typeof LayoutImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/products/$postId": {
+      id: "/products/$postId";
+      path: "/products/$postId";
+      fullPath: "/products/$postId";
+      preLoaderRoute: typeof ProductsPostIdImport;
       parentRoute: typeof rootRoute;
     };
     "/(auth)/login": {
@@ -161,13 +166,6 @@ declare module "@tanstack/react-router" {
       fullPath: "/table";
       preLoaderRoute: typeof LayoutTableLazyImport;
       parentRoute: typeof LayoutImport;
-    };
-    "/products/$postId": {
-      id: "/products/$postId";
-      path: "/products/$postId";
-      fullPath: "/products/$postId";
-      preLoaderRoute: typeof ProductsPostIdLazyImport;
-      parentRoute: typeof rootRoute;
     };
     "/_layout/": {
       id: "/_layout/";
@@ -213,8 +211,8 @@ export const routeTree = rootRoute.addChildren({
     LayoutPostPostIdLazyRoute,
     LayoutBookstoreIndexLazyRoute,
   }),
+  ProductsPostIdRoute,
   authLoginLazyRoute,
-  ProductsPostIdLazyRoute,
   ProductsIndexLazyRoute,
 });
 
@@ -227,8 +225,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_layout",
-        "/login",
         "/products/$postId",
+        "/login",
         "/products/"
       ]
     },
@@ -244,6 +242,9 @@ export const routeTree = rootRoute.addChildren({
         "/_layout/post/$postId",
         "/_layout/bookstore/"
       ]
+    },
+    "/products/$postId": {
+      "filePath": "products/$postId.tsx"
     },
     "/login": {
       "filePath": "(auth)/login.lazy.tsx"
@@ -267,9 +268,6 @@ export const routeTree = rootRoute.addChildren({
     "/_layout/table": {
       "filePath": "_layout/table.lazy.tsx",
       "parent": "/_layout"
-    },
-    "/products/$postId": {
-      "filePath": "products/$postId.lazy.tsx"
     },
     "/_layout/": {
       "filePath": "_layout/index.tsx",

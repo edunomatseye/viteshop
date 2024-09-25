@@ -7,7 +7,15 @@ import {
 
 import "../App.css";
 
-export const Route = createRootRouteWithContext()({
+export type Post = {
+  id: string;
+  title: string;
+  content: string;
+};
+
+export const Route = createRootRouteWithContext<{
+  fetchPosts: () => Promise<Post[]>;
+}>()({
   component: RootRoute,
 });
 
