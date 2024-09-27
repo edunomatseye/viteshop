@@ -53,6 +53,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ books }) => {
     country: "",
     language: "",
     year: "",
+    pages: "",
   });
   const [filteredBooks, setFilteredBooks] = useState<Book[]>(books);
 
