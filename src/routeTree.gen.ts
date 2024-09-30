@@ -26,6 +26,7 @@ const LayoutFormLazyImport = createFileRoute("/_layout/form")();
 const LayoutContactLazyImport = createFileRoute("/_layout/contact")();
 const LayoutAboutLazyImport = createFileRoute("/_layout/about")();
 const authLoginLazyImport = createFileRoute("/(auth)/login")();
+const LayoutQuotesIndexLazyImport = createFileRoute("/_layout/quotes/")();
 const LayoutBookstoreIndexLazyImport = createFileRoute("/_layout/bookstore/")();
 const LayoutPostPostIdLazyImport = createFileRoute("/_layout/post/$postId")();
 
@@ -92,6 +93,13 @@ const ProductsPostIdRoute = ProductsPostIdImport.update({
   path: "/products/$postId",
   getParentRoute: () => rootRoute,
 } as any);
+
+const LayoutQuotesIndexLazyRoute = LayoutQuotesIndexLazyImport.update({
+  path: "/quotes/",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/quotes/index.lazy").then((d) => d.Route),
+);
 
 const LayoutBookstoreIndexLazyRoute = LayoutBookstoreIndexLazyImport.update({
   path: "/bookstore/",
@@ -195,6 +203,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutBookstoreIndexLazyImport;
       parentRoute: typeof LayoutImport;
     };
+    "/_layout/quotes/": {
+      id: "/_layout/quotes/";
+      path: "/quotes";
+      fullPath: "/quotes";
+      preLoaderRoute: typeof LayoutQuotesIndexLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
   }
 }
 
@@ -210,6 +225,7 @@ export const routeTree = rootRoute.addChildren({
     LayoutIndexRoute,
     LayoutPostPostIdLazyRoute,
     LayoutBookstoreIndexLazyRoute,
+    LayoutQuotesIndexLazyRoute,
   }),
   ProductsPostIdRoute,
   authLoginLazyRoute,
@@ -240,7 +256,8 @@ export const routeTree = rootRoute.addChildren({
         "/_layout/table",
         "/_layout/",
         "/_layout/post/$postId",
-        "/_layout/bookstore/"
+        "/_layout/bookstore/",
+        "/_layout/quotes/"
       ]
     },
     "/products/$postId": {
@@ -282,6 +299,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/bookstore/": {
       "filePath": "_layout/bookstore/index.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/quotes/": {
+      "filePath": "_layout/quotes/index.lazy.tsx",
       "parent": "/_layout"
     }
   }
