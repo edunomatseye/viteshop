@@ -37,7 +37,7 @@ function InspirationQuote() {
 function FancyText({ title }: { title: string }) {
   return (
     <>
-      <h5>{title}</h5>
+      <h3 className="font-bold">{title}</h3>
       <div>Your Inspiration quote is: </div>
     </>
   );

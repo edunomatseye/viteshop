@@ -63,6 +63,9 @@ function RootRoute() {
         <Link to="/bookstore" className="[&.active]:font-bold">
           Bookstore
         </Link>{" "}
+        <Link to="/quotes" className="[&.active]:font-bold">
+          Daily Quotes
+        </Link>{" "}
       </div>
       <hr />
 
