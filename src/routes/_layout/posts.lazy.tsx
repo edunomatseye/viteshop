@@ -33,7 +33,7 @@ export const CommentList = forwardRef<CommentListRef>((_, ref) => {
   );
 
   const comments = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 15; i++) {
     comments.push(<p key={i}>Comments # {i}</p>);
   }
 
