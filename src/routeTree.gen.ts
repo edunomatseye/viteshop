@@ -22,6 +22,7 @@ import { Route as ProductsPostIdImport } from "./routes/products/$postId";
 const ProductsIndexLazyImport = createFileRoute("/products/")();
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
+const LayoutGithubLazyImport = createFileRoute("/_layout/github")();
 const LayoutFormLazyImport = createFileRoute("/_layout/form")();
 const LayoutContactLazyImport = createFileRoute("/_layout/contact")();
 const LayoutAboutLazyImport = createFileRoute("/_layout/about")();
@@ -61,6 +62,13 @@ const LayoutPostsLazyRoute = LayoutPostsLazyImport.update({
   getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
   import("./routes/_layout/posts.lazy").then((d) => d.Route),
+);
+
+const LayoutGithubLazyRoute = LayoutGithubLazyImport.update({
+  path: "/github",
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import("./routes/_layout/github.lazy").then((d) => d.Route),
 );
 
 const LayoutFormLazyRoute = LayoutFormLazyImport.update({
@@ -161,6 +169,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutFormLazyImport;
       parentRoute: typeof LayoutImport;
     };
+    "/_layout/github": {
+      id: "/_layout/github";
+      path: "/github";
+      fullPath: "/github";
+      preLoaderRoute: typeof LayoutGithubLazyImport;
+      parentRoute: typeof LayoutImport;
+    };
     "/_layout/posts": {
       id: "/_layout/posts";
       path: "/posts";
@@ -220,6 +235,7 @@ export const routeTree = rootRoute.addChildren({
     LayoutAboutLazyRoute,
     LayoutContactLazyRoute,
     LayoutFormLazyRoute,
+    LayoutGithubLazyRoute,
     LayoutPostsLazyRoute,
     LayoutTableLazyRoute,
     LayoutIndexRoute,
@@ -252,6 +268,7 @@ export const routeTree = rootRoute.addChildren({
         "/_layout/about",
         "/_layout/contact",
         "/_layout/form",
+        "/_layout/github",
         "/_layout/posts",
         "/_layout/table",
         "/_layout/",
@@ -276,6 +293,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/form": {
       "filePath": "_layout/form.lazy.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/github": {
+      "filePath": "_layout/github.lazy.tsx",
       "parent": "/_layout"
     },
     "/_layout/posts": {
