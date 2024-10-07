@@ -16,13 +16,13 @@ import { Route as rootRoute } from "./routes/__root";
 import { Route as LayoutImport } from "./routes/_layout";
 import { Route as LayoutIndexImport } from "./routes/_layout/index";
 import { Route as ProductsPostIdImport } from "./routes/products/$postId";
+import { Route as LayoutGithubImport } from "./routes/_layout/github";
 
 // Create Virtual Routes
 
 const ProductsIndexLazyImport = createFileRoute("/products/")();
 const LayoutTableLazyImport = createFileRoute("/_layout/table")();
 const LayoutPostsLazyImport = createFileRoute("/_layout/posts")();
-const LayoutGithubLazyImport = createFileRoute("/_layout/github")();
 const LayoutFormLazyImport = createFileRoute("/_layout/form")();
 const LayoutContactLazyImport = createFileRoute("/_layout/contact")();
 const LayoutAboutLazyImport = createFileRoute("/_layout/about")();
@@ -64,13 +64,6 @@ const LayoutPostsLazyRoute = LayoutPostsLazyImport.update({
   import("./routes/_layout/posts.lazy").then((d) => d.Route),
 );
 
-const LayoutGithubLazyRoute = LayoutGithubLazyImport.update({
-  path: "/github",
-  getParentRoute: () => LayoutRoute,
-} as any).lazy(() =>
-  import("./routes/_layout/github.lazy").then((d) => d.Route),
-);
-
 const LayoutFormLazyRoute = LayoutFormLazyImport.update({
   path: "/form",
   getParentRoute: () => LayoutRoute,
@@ -100,6 +93,11 @@ const authLoginLazyRoute = authLoginLazyImport
 const ProductsPostIdRoute = ProductsPostIdImport.update({
   path: "/products/$postId",
   getParentRoute: () => rootRoute,
+} as any);
+
+const LayoutGithubRoute = LayoutGithubImport.update({
+  path: "/github",
+  getParentRoute: () => LayoutRoute,
 } as any);
 
 const LayoutQuotesIndexLazyRoute = LayoutQuotesIndexLazyImport.update({
@@ -134,6 +132,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LayoutImport;
       parentRoute: typeof rootRoute;
     };
+    "/_layout/github": {
+      id: "/_layout/github";
+      path: "/github";
+      fullPath: "/github";
+      preLoaderRoute: typeof LayoutGithubImport;
+      parentRoute: typeof LayoutImport;
+    };
     "/products/$postId": {
       id: "/products/$postId";
       path: "/products/$postId";
@@ -167,13 +172,6 @@ declare module "@tanstack/react-router" {
       path: "/form";
       fullPath: "/form";
       preLoaderRoute: typeof LayoutFormLazyImport;
-      parentRoute: typeof LayoutImport;
-    };
-    "/_layout/github": {
-      id: "/_layout/github";
-      path: "/github";
-      fullPath: "/github";
-      preLoaderRoute: typeof LayoutGithubLazyImport;
       parentRoute: typeof LayoutImport;
     };
     "/_layout/posts": {
@@ -232,10 +230,10 @@ declare module "@tanstack/react-router" {
 
 export const routeTree = rootRoute.addChildren({
   LayoutRoute: LayoutRoute.addChildren({
+    LayoutGithubRoute,
     LayoutAboutLazyRoute,
     LayoutContactLazyRoute,
     LayoutFormLazyRoute,
-    LayoutGithubLazyRoute,
     LayoutPostsLazyRoute,
     LayoutTableLazyRoute,
     LayoutIndexRoute,
@@ -265,10 +263,10 @@ export const routeTree = rootRoute.addChildren({
     "/_layout": {
       "filePath": "_layout.tsx",
       "children": [
+        "/_layout/github",
         "/_layout/about",
         "/_layout/contact",
         "/_layout/form",
-        "/_layout/github",
         "/_layout/posts",
         "/_layout/table",
         "/_layout/",
@@ -276,6 +274,10 @@ export const routeTree = rootRoute.addChildren({
         "/_layout/bookstore/",
         "/_layout/quotes/"
       ]
+    },
+    "/_layout/github": {
+      "filePath": "_layout/github.tsx",
+      "parent": "/_layout"
     },
     "/products/$postId": {
       "filePath": "products/$postId.tsx"
@@ -293,10 +295,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/form": {
       "filePath": "_layout/form.lazy.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/github": {
-      "filePath": "_layout/github.lazy.tsx",
       "parent": "/_layout"
     },
     "/_layout/posts": {
