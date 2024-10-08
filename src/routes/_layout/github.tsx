@@ -118,22 +118,6 @@ function Projects({
   );
 }
 
-// function fetchProject2(projectName: string) {
-//   return projectName;
-// }
-
-// function fetchProjects2() {
-//   const projects = [];
-//   for (let i = 0; i <= 10; i++) {
-//     projects.push({
-//       id: i,
-//       title: `Title ${i}`,
-//       name: `Name ${i}`,
-//     });
-//   }
-//   return projects;
-// }
-
 async function fetchProjects(): Promise<
   Array<{ name: string; full_name: string }>
 > {
