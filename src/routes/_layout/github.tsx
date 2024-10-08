@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Await, createFileRoute } from "@tanstack/react-router";
+import { Await, createFileRoute, defer } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_layout/github")({
@@ -8,8 +8,10 @@ export const Route = createFileRoute("/_layout/github")({
     const projects = await fetchProjects().catch((e) =>
       console.warn(e.message),
     );
+    const slowFetchProject = fetchProject("TanStack/tanstack.com");
     return {
       projects,
+      defferedFetchProject: defer(slowFetchProject),
     };
   },
   errorComponent: ({ error, reset, info }) => (
@@ -25,6 +27,10 @@ export const Route = createFileRoute("/_layout/github")({
       </>
     );
   },
+  loaderDeps: ({ search }) => ({
+    search,
+  }),
+  staleTime: 10_000,
 });
 
 interface Project {
@@ -48,11 +54,11 @@ function Github() {
       </Button>
       <hr />
       {showProjects ? (
-        <Suspense fallback={<>Loading...</>}>
+        <Suspense fallback={<>Loading...Suspense</>}>
           {activeProject ? (
             <Project
               onProjectChange={setActiveProject}
-              project={activeProject}
+              activeProject={activeProject}
             />
           ) : (
             <Projects onProjectChange={setActiveProject} />
@@ -65,18 +71,22 @@ function Github() {
 
 function Project({
   onProjectChange,
-  project,
+  activeProject,
 }: {
   onProjectChange: React.Dispatch<React.SetStateAction<string | null>>;
-  project: string | null;
+  activeProject: string | null;
 }) {
+  //const { defferedFetchProject } = Route.useLoaderData();
   return (
     <>
+      <span>Project Name: {activeProject}</span>
+      <span>{}</span>
+      <br />
       <Button onClick={() => onProjectChange(null)}>Back</Button>
       <br />
       <Await
-        promise={fetchProject(project!)}
-        fallback={<>Loading Project...</>}
+        promise={fetchProject(activeProject!)}
+        fallback={<>Loading Project...Await</>}
       >
         {(project) => (
           <>
@@ -117,22 +127,6 @@ function Projects({
     </>
   );
 }
-
-// function fetchProject2(projectName: string) {
-//   return projectName;
-// }
-
-// function fetchProjects2() {
-//   const projects = [];
-//   for (let i = 0; i <= 10; i++) {
-//     projects.push({
-//       id: i,
-//       title: `Title ${i}`,
-//       name: `Name ${i}`,
-//     });
-//   }
-//   return projects;
-// }
 
 async function fetchProjects(): Promise<
   Array<{ name: string; full_name: string }>
