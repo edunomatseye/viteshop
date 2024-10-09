@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { GithubPage } from "../../components/components/GithubPage";
+import { GithubPage } from "../../components/github/GithubPage";
 import { fetchProjects } from "../../api/githubApi";
-import { ErrorBoundary } from "../../components/components/ErrorBoundary";
+import { ErrorBoundary } from "../../components/github/ErrorBoundary";
 
 export const Route = createFileRoute("/_layout/github")({
   component: GithubPageWrapper,

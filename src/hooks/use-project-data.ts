@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { fetchProject } from "../../api/githubApi";
+import { fetchProject } from "../api/githubApi";
 
 export function useProjectData(activeProject: string) {
   const projectPromise = useMemo(

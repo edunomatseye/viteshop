@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Projects } from "./Projects";
 import { Project } from "./Project";
-import { useGithubState } from "../../hooks/hooks/useGithubState";
+import { useGithubState } from "../../hooks/use-github-state";
 
 export function GithubPage() {
   const { showProjects, activeProject, toggleProjects, setActiveProject } =

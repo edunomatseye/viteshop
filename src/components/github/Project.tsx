@@ -1,6 +1,6 @@
 import { Await } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { useProjectData } from "../../hooks/hooks/useProjectData";
+import { useProjectData } from "../../hooks/use-project-data";
 
 interface ProjectProps {
   onProjectChange: (project: string | null) => void;
