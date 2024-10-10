@@ -2,7 +2,9 @@ import { Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { GithubPage } from "../../components/github/GithubPage";
 import { fetchProjects } from "../../api/githubApi";
-import { ErrorBoundary } from "../../components/github/ErrorBoundary";
+import { ErrorBoundary as ErrorResetBoundary } from "../../components/github/ErrorBoundary";
+import { ErrorBoundary } from "react-error-boundary";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_layout/github")({
   component: GithubPageWrapper,
@@ -21,11 +23,24 @@ export const Route = createFileRoute("/_layout/github")({
 });
 
 function GithubPageWrapper() {
+  const reset = () => {
+    console.error("pity me1");
+  };
   return (
-    // <ErrorBoundary fallback={({ error }) => <div>Error: {error.message}</div>}>
-    <Suspense fallback={<div>Loading...</div>}>
-      <GithubPage />
-    </Suspense>
-    // </ErrorBoundary>
+    <ErrorBoundary
+      fallbackRender={({ error, resetErrorBoundary }) => (
+        <div>
+          <ErrorResetBoundary error={error} reset={reset}></ErrorResetBoundary>
+          There was an error!{" "}
+          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
+        </div>
+      )}
+      onReset={reset}
+    >
+      <Suspense fallback={<div>Loading...</div>}>
+        <GithubPage />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
