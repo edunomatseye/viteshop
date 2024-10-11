@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Route } from "../../routes/_layout/github";
 import { Project } from "../../types/types";
+import { useProjectsData } from "@/hooks/use-project-data";
 
 interface ProjectsProps {
   onProjectChange: (project: string) => void;
 }
 
 export function Projects({ onProjectChange }: ProjectsProps) {
-  const { projects } = Route.useLoaderData();
+  const { data: projects } = useProjectsData();
 
   if (!projects) {
     return <div>No projects available.</div>;
