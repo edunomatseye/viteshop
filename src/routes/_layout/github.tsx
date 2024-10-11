@@ -10,7 +10,7 @@ const queryClient = new QueryClient();
 
 export const Route = createFileRoute("/_layout/github")({
   component: GithubPageWrapper,
-  errorComponent: ErrorBoundary,
+  errorComponent: ErrorResetBoundary,
   loaderDeps: ({ search }) => ({ search }),
   staleTime: 10_000,
 });
