@@ -9,6 +9,10 @@ interface ProjectProps {
 export function Project({ onProjectChange, activeProject }: ProjectProps) {
   const { data: project } = useProjectData(activeProject);
 
+  if (!project) {
+    return <div>No project available.</div>;
+  }
+
   return (
     <>
       <span>Project Name: {activeProject}</span>
