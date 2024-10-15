@@ -16,6 +16,7 @@ import { Route as rootRoute } from "./routes/__root";
 import { Route as LayoutImport } from "./routes/_layout";
 import { Route as LayoutIndexImport } from "./routes/_layout/index";
 import { Route as ProductsPostIdImport } from "./routes/products/$postId";
+import { Route as ApiHelloImport } from "./routes/api/hello";
 import { Route as LayoutGithubImport } from "./routes/_layout/github";
 
 // Create Virtual Routes
@@ -95,6 +96,11 @@ const ProductsPostIdRoute = ProductsPostIdImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
+const ApiHelloRoute = ApiHelloImport.update({
+  path: "/api/hello",
+  getParentRoute: () => rootRoute,
+} as any);
+
 const LayoutGithubRoute = LayoutGithubImport.update({
   path: "/github",
   getParentRoute: () => LayoutRoute,
@@ -138,6 +144,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/github";
       preLoaderRoute: typeof LayoutGithubImport;
       parentRoute: typeof LayoutImport;
+    };
+    "/api/hello": {
+      id: "/api/hello";
+      path: "/api/hello";
+      fullPath: "/api/hello";
+      preLoaderRoute: typeof ApiHelloImport;
+      parentRoute: typeof rootRoute;
     };
     "/products/$postId": {
       id: "/products/$postId";
@@ -241,6 +254,7 @@ export const routeTree = rootRoute.addChildren({
     LayoutBookstoreIndexLazyRoute,
     LayoutQuotesIndexLazyRoute,
   }),
+  ApiHelloRoute,
   ProductsPostIdRoute,
   authLoginLazyRoute,
   ProductsIndexLazyRoute,
@@ -255,6 +269,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_layout",
+        "/api/hello",
         "/products/$postId",
         "/login",
         "/products/"
@@ -278,6 +293,9 @@ export const routeTree = rootRoute.addChildren({
     "/_layout/github": {
       "filePath": "_layout/github.tsx",
       "parent": "/_layout"
+    },
+    "/api/hello": {
+      "filePath": "api/hello.ts"
     },
     "/products/$postId": {
       "filePath": "products/$postId.tsx"
